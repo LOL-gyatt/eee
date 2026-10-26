@@ -1,51 +1,58 @@
-name: Deploy Review/Production Site to GitHub Pages 
+name: Deploy Review/Production Site to GitHub Pages
 
 on:
-push:
-branches:
-- main 
+  push:
+    branches:
+      - main
 
 permissions:
-contents: read
-pages: write
-id-token: write 
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-group: "pages"
-cancel-in-progress: true 
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-deploy:
-environment:
-name: github-pages
-url: ${{ steps.deployment.outputs.page_url }}
-runs-on: ubuntu-latest
-steps:
-- name: Checkout Source Code
-uses: actions/checkout@v4 
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
-* name: Install Node.js
-uses: actions/setup-node@v4
-with:
-node-version: 20
-* name: Install pnpm Monorepo Tool
-uses: pnpm/action-setup@v3
-with:
-version: 9
-* name: Install All Monorepo Dependencies
-run: pnpm install --no-frozen-lockfile
-* name: Compile Application Production Build
-env:
-PORT: 3000
-BASE_PATH: /eee/
-NODE_ENV: production
-run: pnpm --filter blockbound-collector build
-* name: Setup GitHub Pages Infrastructure
-uses: actions/configure-pages@v4
-* name: Upload Static Assets Folder
-uses: actions/upload-pages-artifact@v3
-with:
-path: 'artifacts/blockbound-collector/dist/public'
-* name: Deploy Live Package to GitHub Pages
-id: deployment
-uses: actions/deploy-pages@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm Monorepo Tool
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install All Monorepo Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Compile Application Production Build
+        env:
+          PORT: 3000
+          BASE_PATH: /eee/
+          NODE_ENV: production
+        run: pnpm --filter blockbound-collector build
+
+      - name: Setup GitHub Pages Infrastructure
+        uses: actions/configure-pages@v4
+
+      - name: Upload Static Assets Folder
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # This points directly to the compiled static assets directory
+          path: 'artifacts/blockbound-collector/dist/public/'
+
+      - name: Deploy Live Package to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
