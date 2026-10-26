@@ -37,7 +37,7 @@ run: pnpm install --no-frozen-lockfile
 * name: Compile Application Production Build
 env:
 PORT: 3000
-BASE_PATH: /Minecraft-Collector-Checklist/
+BASE_PATH: /eee/
 NODE_ENV: production
 run: pnpm --filter blockbound-collector build
 * name: Setup GitHub Pages Infrastructure
